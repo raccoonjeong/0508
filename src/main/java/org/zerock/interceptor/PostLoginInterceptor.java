@@ -1,5 +1,6 @@
 package org.zerock.interceptor;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,21 +18,25 @@ public class PostLoginInterceptor extends HandlerInterceptorAdapter {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		
+		
 		Object loginResult = modelAndView.getModel().get("member");
-		
 		MemberVO vo = (MemberVO)loginResult;
-		
-		log.info("vo.....:"+vo);
+				
 		request.getSession().setAttribute("member", vo);
-
+		log.info("vo.....:"+vo);
 		
+		Cookie loginCookie = new Cookie("login", request.getSession().getId());
+		//세션의 아이디 구하기
+		
+		loginCookie.setPath("/");
+		loginCookie.setMaxAge(60*60*24*7);
+		
+		response.addCookie(loginCookie);	
+		/*
 		if(vo!=null) {
 			response.sendRedirect("/sample/doB");
 		}else {
 			response.sendRedirect("/login");
-		}
-		
+		}*/
 	}
-	
-
 }
